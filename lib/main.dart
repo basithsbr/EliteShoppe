@@ -1,0 +1,21 @@
+import 'package:booktrip_app/home_screen.dart';
+import 'package:booktrip_app/product_search.dart';
+import 'package:booktrip_app/layout_main.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      home: const LayoutMain(),
+    );
+  }
+}
