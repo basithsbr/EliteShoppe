@@ -42412,7 +42412,7 @@ A.aal.prototype={
 $0(){return this.a.d.$1("product_search")},
 $S:0}
 A.Mh.prototype={
-J(a){var s,r,q,p,o,n,m,l,k,j,i=null,h=A.c(["assets/eye_glass_1.jpg","assets/eye_glass_2.jpg","assets/eye_glass_3.jpg","assets/eye_glass_4.jpg","assets/eye_glass_5.jpg","assets/videos/eye_glass_vid1.mp4"],t.s),g=["S","M","L","XL","XXL","XXXL"],f=A.bi(i,A.Kx(i,i,B.Gi,i,i,this.e,i,i,i),B.m,B.fM,i,i,i,i,i,i,i,i,i),e=this.c.h(0,"title")
+J(a){var s,r,q,p,o,n,m,l,k,j,i=null,h=A.c(["assets/eye_glass_1.jpg","assets/eye_glass_2.jpg","assets/eye_glass_3.jpg","assets/eye_glass_4.jpg","assets/bag1.jpg","assets/videos/eye_glass_vid1.mp4"],t.s),g=["S","M","L","XL","XXL","XXXL"],f=A.bi(i,A.Kx(i,i,B.Gi,i,i,this.e,i,i,i),B.m,B.fM,i,i,i,i,i,i,i,i,i),e=this.c.h(0,"title")
 e.toString
 s=A.V(a).ok.e
 r=t.p
