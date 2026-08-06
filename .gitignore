@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+build/b51252080af43c16ca815f29410a71a8/gen_localizations.stamp
+build/b51252080af43c16ca815f29410a71a8/gen_dart_plugin_registrant.stamp
+build/b51252080af43c16ca815f29410a71a8/_composite.stamp

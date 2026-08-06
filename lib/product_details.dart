@@ -20,7 +20,7 @@ class ProductDetails extends StatelessWidget {
       'assets/eye_glass_2.jpg',
       'assets/eye_glass_3.jpg',
       'assets/eye_glass_4.jpg',
-      'assets/eye_glass_5.jpg',
+      'assets/bag1.jpg',
       'assets/videos/eye_glass_vid1.mp4',
     ];
 
