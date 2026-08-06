@@ -16,10 +16,10 @@ class ProductDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> imgList = [
-      'assets/eye_glass_1.jpg',
-      'assets/eye_glass_2.jpg',
-      'assets/eye_glass_3.jpg',
-      'assets/eye_glass_4.jpg',
+      'assets/bag1.jpg',
+      'assets/bag1.jpg',
+      'assets/bag1.jpg',
+      'assets/bag1.jpg',
       'assets/bag1.jpg',
       'assets/videos/eye_glass_vid1.mp4',
     ];
