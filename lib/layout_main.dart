@@ -1,5 +1,6 @@
 import 'package:booktrip_app/product_wrapper.dart';
 import 'package:booktrip_app/home_screen.dart';
+import 'package:booktrip_app/file_upload.dart';
 import 'package:flutter/material.dart';
 
 class LayoutMain extends StatefulWidget {
@@ -49,7 +50,7 @@ class _LayoutMainState extends State<LayoutMain> {
   final String _mobileDeviceType = 'Mobile';
   final String _tabletDeviceType = 'Tablet';
   final String _webDeviceType = 'Web';
-  String? _showSearchScreen = "product_list";
+  final String _showSearchScreen = "product_list";
   String? _selectedValue = 'asc';
   int _navIndex = 0;
   bool _isFilterPanelOpen = true;
@@ -62,6 +63,7 @@ class _LayoutMainState extends State<LayoutMain> {
         deviceType: "Tablet",
       ), // Your existing product screen widget
       ProductWrapper(key: UniqueKey(), deviceType: _mobileDeviceType),
+      FileUploadWidget(),
     ];
     final List<Widget> tabScreens = [
       // const HomeScreenContent(), // Replace with your actual home widget
@@ -69,6 +71,7 @@ class _LayoutMainState extends State<LayoutMain> {
         deviceType: "Tablet",
       ), // Your existing product screen widget
       ProductWrapper(key: UniqueKey(), deviceType: "Tablet"),
+      FileUploadWidget(),
     ];
     return ResponsiveLayout(
       mobile: Scaffold(
@@ -97,6 +100,10 @@ class _LayoutMainState extends State<LayoutMain> {
               icon: Icon(Icons.search),
               label: 'Products',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.upload_file),
+              label: 'Upload',
+            ),
           ],
         ),
       ),
@@ -123,6 +130,10 @@ class _LayoutMainState extends State<LayoutMain> {
                 NavigationRailDestination(
                   icon: Icon(Icons.analytics),
                   label: Text('Analytics'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.upload_file),
+                  label: Text('Upload'),
                 ),
               ],
             ),

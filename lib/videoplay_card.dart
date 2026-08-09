@@ -42,7 +42,6 @@ class _VideoPlayerCardState extends State<VideoPlayerCard> {
           .catchError((error) {
             print("Web Engine Render Error: $error");
           });
-    ;
   }
 
   @override
