@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:booktrip_app/cloud_service_fileUpload.dart';
+import 'package:booktrip_app/cloud_service_fileupload.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
 

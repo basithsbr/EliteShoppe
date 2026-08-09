@@ -45,3 +45,6 @@ app.*.map.json
 /android/app/release
 build/*
 
+mongo/elite_shoppe.js
+mongo/eliteShoppee.mongodb.js
+mongo/playground-2.mongodb.js
