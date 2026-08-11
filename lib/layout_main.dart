@@ -2,6 +2,7 @@ import 'package:booktrip_app/product_wrapper.dart';
 import 'package:booktrip_app/home_screen.dart';
 import 'package:booktrip_app/file_upload.dart';
 import 'package:flutter/material.dart';
+import 'package:booktrip_app/upload_gallery.dart';
 
 class LayoutMain extends StatefulWidget {
   const LayoutMain({super.key});
@@ -63,7 +64,7 @@ class _LayoutMainState extends State<LayoutMain> {
         deviceType: "Tablet",
       ), // Your existing product screen widget
       ProductWrapper(key: UniqueKey(), deviceType: _mobileDeviceType),
-      FileUploadWidget(),
+      WebCardGalleryScreen(),
     ];
     final List<Widget> tabScreens = [
       // const HomeScreenContent(), // Replace with your actual home widget
@@ -71,7 +72,8 @@ class _LayoutMainState extends State<LayoutMain> {
         deviceType: "Tablet",
       ), // Your existing product screen widget
       ProductWrapper(key: UniqueKey(), deviceType: "Tablet"),
-      FileUploadWidget(),
+      // FileUploadWidget(),
+      WebCardGalleryScreen(),
     ];
     return ResponsiveLayout(
       mobile: Scaffold(

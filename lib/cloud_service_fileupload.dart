@@ -64,9 +64,9 @@ class CloudinaryService {
       String isVideo = fileName.endsWith('.mp4') || fileName.endsWith('.mov')
           ? 'video'
           : 'image';
-      String endpointUrl = "https://cloudinary.com";
+      String endpointUrl =
+          "https://823924447883675:la5kuyFrfzL_buG8PD9cOCqn3Kk@api.cloudinary.com/v1_1/hvuzvzcp/image/upload";
 
-      // 4. Fire network request
       dio.options.connectTimeout = const Duration(seconds: 30);
       dio.options.receiveTimeout = const Duration(seconds: 30);
 

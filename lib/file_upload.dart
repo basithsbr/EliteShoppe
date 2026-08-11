@@ -56,98 +56,136 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
       });
     }
 
-    File file = File(_pickedFile!.path!);
-    CloudinaryService().uploadMediaFile(_pickedFile);
+    Map<String, dynamic>? status = await CloudinaryService().uploadMediaFile(
+      _pickedFile,
+    );
+
     setState(() {
       _isUploading = false;
+      if (status == null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to upload file!')));
+      } else if (status.containsKey('error')) {
+        // Cloudinary API returned an explicit error object
+        String errorMessage = status['error']['message'] ?? 'Unknown API error';
+        print("Cloudinary API Error: $errorMessage");
+      } else if (status.containsKey('secure_url')) {
+        // Successful upload
+        String fileUrl = status['secure_url'];
+        String publicId = status['public_id'];
+        print("Upload Successful!");
+        print("File URL: $fileUrl");
+        print("Public ID: $publicId");
+        _pickedFile = null;
+        _fileName = null;
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File uploaded successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to upload file!')));
+      }
     });
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('File uploaded successfully!')),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Upload Document',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-
-            // Drop zone / Selection Area UI
-            InkWell(
-              onTap: _isUploading ? null : _pickFile,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey.shade400,
-                    style: BorderStyle.solid,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade50,
-                ),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 48,
-                      color: Colors.blue,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _fileName ?? 'Tap to browse file',
-                      style: TextStyle(
-                        color: _fileName != null
-                            ? Colors.black87
-                            : Colors.grey.shade600,
-                        fontWeight: _fileName != null
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Progress Bar (Visible during upload)
-            if (_isUploading) ...[
-              LinearProgressIndicator(value: _uploadProgress),
-              const SizedBox(height: 8),
-              Text(
-                'Uploading... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
+    return Container(
+      width: 400,
+      padding: const EdgeInsets.all(0),
+      child: Card(
+        elevation: 4,
+        color: Colors.white,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Upload Document',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
               const SizedBox(height: 16),
-            ],
 
-            // Action Button
-            ElevatedButton.icon(
-              onPressed: (_pickedFile == null || _isUploading)
-                  ? null
-                  : _uploadFile,
-              icon: const Icon(Icons.upload),
-              label: Text(_isUploading ? 'Uploading...' : 'Start Upload'),
-            ),
-          ],
+              // Drop zone / Selection Area UI
+              InkWell(
+                onTap: _isUploading ? null : _pickFile,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.white,
+                      style: BorderStyle.solid,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.cloud_upload_outlined,
+                        size: 48,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _fileName ?? 'Tap to browse file',
+                        style: TextStyle(
+                          color: _fileName != null
+                              ? Colors.black87
+                              : Colors.grey.shade600,
+                          fontWeight: _fileName != null
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Progress Bar (Visible during upload)
+              if (_isUploading) ...[
+                LinearProgressIndicator(value: _uploadProgress),
+                const SizedBox(height: 8),
+                Text(
+                  'Uploading... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                ),
+                const SizedBox(height: 16),
+              ],
+
+              // Action Button
+              ElevatedButton.icon(
+                onPressed: (_pickedFile == null || _isUploading)
+                    ? null
+                    : _uploadFile,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                    // Text color
+                    // Change 12.0 to your desired radius
+                  ),
+                ),
+
+                icon: const Icon(Icons.upload),
+                label: Text(_isUploading ? 'Uploading...' : 'Start Upload'),
+              ),
+            ],
+          ),
         ),
       ),
     );
