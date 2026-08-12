@@ -6,11 +6,19 @@ class EditableImage {
   final PlatformFile file;
   String title;
   String description;
+  String price;
+  String brand;
+  String category;
+  bool isCompleted;
 
   EditableImage({
     required this.file,
     required this.title,
     this.description = '',
+    this.price = '',
+    this.brand = '',
+    this.category = '',
+    this.isCompleted = false,
   });
 }
 
@@ -40,7 +48,15 @@ class _WebCardGalleryScreenState extends State<WebCardGalleryScreen> {
           // Combines newly picked images with existing ones
           _selectedImages.addAll(
             result.files.map(
-              (file) => EditableImage(file: file, title: file.name),
+              (file) => EditableImage(
+                file: file,
+                title: file.name,
+                brand: "",
+                category: "",
+                description: "",
+                price: "",
+                isCompleted: false,
+              ),
             ),
           );
         });
@@ -120,10 +136,19 @@ class _WebCardGalleryScreenState extends State<WebCardGalleryScreen> {
               itemBuilder: (context, index) {
                 final file = _selectedImages[index].file;
                 return ImageCardItem(
-                  file: file,
                   onDelete: () => _removeImage(index),
-                  onUpdate: (title, description, price, brand, category) =>
-                      print("Updated Image: $title, Description: $description"),
+                  onUpdate:
+                      (title, description, price, brand, category, isDone) =>
+                          setState(() {
+                            _selectedImages[index].title = title;
+                            _selectedImages[index].description = description;
+                            _selectedImages[index].price = price;
+                            _selectedImages[index].brand = brand;
+                            _selectedImages[index].category = category;
+                            _selectedImages[index].isCompleted = isDone;
+                          }),
+                  changesDone: _selectedImages[index].isCompleted,
+                  editableImage: _selectedImages[index],
                 );
               },
             ),
@@ -138,47 +163,76 @@ class _WebCardGalleryScreenState extends State<WebCardGalleryScreen> {
   }
 }
 
-class ImageCardItem extends StatelessWidget {
-  final PlatformFile file;
+class ImageCardItem extends StatefulWidget {
   final VoidCallback onDelete;
+  final bool changesDone;
+  final EditableImage editableImage;
   final Function(
     String title,
     String description,
     String price,
     String brand,
     String category,
+    bool isDone,
   )
   onUpdate;
 
   const ImageCardItem({
     super.key,
-    required this.file,
     required this.onDelete,
     required this.onUpdate,
+    required this.changesDone,
+    required this.editableImage,
   });
+  @override
+  State<ImageCardItem> createState() => _ImageCardItemState();
+}
+
+class _ImageCardItemState extends State<ImageCardItem> {
+  bool _localChangesDone = false;
+  String _currentTitle = '';
+  String _currentPrice = '';
+  String _currentBrand = '';
+  String _currentCategory = '';
+  String _currentDesc = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize text defaults from the incoming file structure
+    _currentTitle = widget.editableImage.file.name;
+    _currentPrice = widget.editableImage.price;
+    _currentBrand = widget.editableImage.brand;
+    _currentCategory = widget.editableImage.category;
+    _currentDesc = widget.editableImage.description;
+    _localChangesDone = widget
+        .editableImage
+        .isCompleted; // Reset local changes on new card creation
+  }
 
   @override
   Widget build(BuildContext context) {
     // Round size to Megabytes for UI display
-    final double sizeInMb = file.size / (1024 * 1024);
+
+    final double sizeInMb = widget.editableImage.file.size / (1024 * 1024);
 
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias, // Ensures image corners align to card shape
       child: InkWell(
-        onTap: () => _showEditDialog(context),
+        onTap: () => {_showEditDialog(context)},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 1. The Image Area
             SizedBox(
-              height: 220,
+              height: 300,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   Image.memory(
-                    file.bytes!,
+                    widget.editableImage.file.bytes!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Center(
                       child: Icon(
@@ -202,7 +256,7 @@ class ImageCardItem extends StatelessWidget {
                           color: Colors.white,
                         ),
                         padding: EdgeInsets.zero,
-                        onPressed: onDelete,
+                        onPressed: widget.onDelete,
                       ),
                     ),
                   ),
@@ -219,7 +273,7 @@ class ImageCardItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        file.name,
+                        widget.editableImage.file.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -238,7 +292,9 @@ class ImageCardItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: CircleAvatar(
-                    backgroundColor: Colors.green,
+                    backgroundColor: !_localChangesDone
+                        ? Colors.redAccent
+                        : Colors.green,
                     radius: 16,
                     child: Icon(Icons.done, size: 16, color: Colors.white),
                   ),
@@ -254,12 +310,20 @@ class ImageCardItem extends StatelessWidget {
   void _showEditDialog(BuildContext context) {
     // Controllers track what the user types inside the fields
     final TextEditingController titleController = TextEditingController(
-      text: file.name,
+      text: _currentTitle,
     );
-    final TextEditingController priceController = TextEditingController();
-    final TextEditingController brandController = TextEditingController();
-    final TextEditingController categoryController = TextEditingController();
-    final TextEditingController prodDescController = TextEditingController();
+    final TextEditingController priceController = TextEditingController(
+      text: _currentPrice,
+    );
+    final TextEditingController brandController = TextEditingController(
+      text: _currentBrand,
+    );
+    final TextEditingController categoryController = TextEditingController(
+      text: _currentCategory,
+    );
+    final TextEditingController prodDescController = TextEditingController(
+      text: _currentDesc,
+    );
 
     showDialog(
       context: context,
@@ -338,19 +402,30 @@ class ImageCardItem extends StatelessWidget {
             // Save Button
             ElevatedButton(
               onPressed: () {
-                onUpdate(
+                setState(() {
+                  _currentTitle = titleController.text;
+                  _currentPrice = priceController.text;
+                  _currentBrand = brandController.text;
+                  _currentCategory = categoryController.text;
+                  _currentDesc = prodDescController.text;
+                  _localChangesDone =
+                      true; // Instantly flips badge color to green
+                });
+
+                widget.onUpdate(
                   titleController.text,
                   prodDescController.text,
                   priceController.text,
                   brandController.text,
                   categoryController.text,
+                  true,
                 );
 
                 Navigator.pop(
                   context,
                 ); // Closes the modal pop-up overlay window
               },
-              child: const Text("Save Changes"),
+              child: const Text("Done"),
             ),
           ],
         );
